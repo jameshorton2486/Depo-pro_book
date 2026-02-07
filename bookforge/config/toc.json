@@ -1,0 +1,257 @@
+{
+  "book_title": "Mastering Legal Transcription",
+  "book_subtitle": "The Complete Guide to Punctuation, Formatting & Precision in Court Reporting",
+  "author": "[Your Name]",
+  "target_audience": "Voice writers and digital reporters",
+  "total_word_target": 49000,
+  "research_strategy": {
+    "deep_research_sections": [3, 4, 6, 8],
+    "api_research_sections": [1, 2, 5, 7, 9, 10, 11, 0]
+  },
+  "sections": [
+    {
+      "number": 3,
+      "title": "Punctuation Mechanics",
+      "subtitle": "The Foundation of Legal Clarity",
+      "part": "PART TWO: THE CRAFT",
+      "slug": "punctuation-mechanics",
+      "subsections": [
+        "3.1 Terminal Marks: Defining Legal Boundaries",
+        "3.2 Connective Punctuation: Structuring Testimony",
+        "3.3 Dashes: The Court Reporter's Workhorse",
+        "3.4 Hyphens & Compound Modifiers in Legal Language",
+        "3.5 Apostrophes in Legal Phrasing",
+        "3.6 Quotation Marks in Testimony",
+        "3.7 Specialized Symbols: Forensic Notation",
+        "3.8 Parenthetical Notations for In-Court Actions",
+        "3.9 Exercises & Error Identification"
+      ],
+      "word_target": 14400,
+      "source_notes": "Draft 1 complete for 3.1-3.8. Enhancement pass needed.",
+      "diagrams": ["Dash vs Ellipsis decision tree", "Comma vs Semicolon flowchart", "Parenthetical placement diagram"],
+      "specific_elements": ["Include O'Connor v. Oakhurst Dairy in 3.2", "Include FRE 801(d)(2) in 3.1", "Include Bluebook Rule 5.3 in 3.7"],
+      "status": "Draft 1 Complete",
+      "depends_on": [],
+      "build_order": 1
+    },
+    {
+      "number": 4,
+      "title": "Verbatim Reporting Challenges",
+      "subtitle": "Capturing the Chaos of Human Conversation",
+      "part": "PART TWO: THE CRAFT",
+      "slug": "verbatim-challenges",
+      "subsections": [
+        "4.1 Punctuating Interrupted and Incomplete Speech",
+        "4.2 Filler Words, Hesitations, and Non-Lexical Utterances",
+        "4.3 Inaudible, Unintelligible, and Overlapping Speech",
+        "4.4 The Ethics of Documenting Imperfect Speech"
+      ],
+      "word_target": 5700,
+      "source_notes": "Draft 1 complete for 4.1-4.4. Enhancement pass needed.",
+      "diagrams": ["Crosstalk protocol table"],
+      "specific_elements": ["Include expert witness malpractice anecdote in 4.1", "Include idorem voice brief hack in 4.2"],
+      "status": "Draft 1 Complete",
+      "depends_on": [3],
+      "build_order": 2
+    },
+    {
+      "number": 1,
+      "title": "Who We Are and Why It Matters",
+      "subtitle": "The Identity of the Modern Court Reporter",
+      "part": "PART ONE: THE PROFESSION",
+      "slug": "who-we-are",
+      "subsections": [
+        "1.1 Voice Writers and Digital Reporters: Two Paths, One Mission",
+        "1.2 Certifications That Define Your Career",
+        "1.3 The Ethical Mandate: Guardians of the Record",
+        "1.4 When the Record Goes Wrong: Real Cases, Real Consequences"
+      ],
+      "word_target": 8000,
+      "source_notes": "Partial drafts in source files. Research doc has certification data.",
+      "diagrams": ["Voice writer vs digital reporter comparison table", "Certification pathway diagram"],
+      "specific_elements": ["Include Mercado v. DynaCorp $2.3M comma", "Include Bell Aliant v. Rogers", "Include State v. Ramirez ellipsis case"],
+      "status": "Not Started",
+      "depends_on": [],
+      "build_order": 3
+    },
+    {
+      "number": 5,
+      "title": "Legal Grammar & Usage",
+      "subtitle": "The Language Rules That Protect the Record",
+      "part": "PART TWO: THE CRAFT",
+      "slug": "legal-grammar",
+      "subsections": [
+        "5.1 Capitalization Rules for Legal Entities and Proper Nouns",
+        "5.2 Numbers, Dates, and Monetary Amounts",
+        "5.3 Commonly Misused Legal Homophones",
+        "5.4 Medical & Legal Terminology in Transcription",
+        "5.5 Latin Terms and Commonly Mispronounced Legal Phrases"
+      ],
+      "word_target": 6400,
+      "source_notes": "No existing draft. Concepts taught in book; full glossaries on website.",
+      "diagrams": ["Atomic Typo Gallery side-by-side"],
+      "specific_elements": ["Include fecal sac vs thecal sac atomic typo", "Include county vs country example", "Link to website glossary tools"],
+      "status": "Not Started",
+      "depends_on": [4],
+      "build_order": 4
+    },
+    {
+      "number": 8,
+      "title": "Your Tools",
+      "subtitle": "Mastering the Technology of Modern Reporting",
+      "part": "PART FOUR: TECHNOLOGY & MODERN PRACTICE",
+      "slug": "your-tools",
+      "subsections": [
+        "8.1 CAT Software for Voice Writers",
+        "8.2 Speech Recognition Mastery",
+        "8.3 The Hardware Ecosystem",
+        "8.4 Accessibility & Digital Compliance"
+      ],
+      "word_target": 9700,
+      "source_notes": "Research doc has extensive tool data. CAT section is voice-writer focused deep dive.",
+      "diagrams": ["CAT workflow diagram: Dragon to CAT to transcript", "Speech recognition comparison table", "Microphone pickup pattern diagram", "Disaster recovery flowchart"],
+      "specific_elements": ["Include Eclipse and CaseCATalyst workflows for voice writers", "Include voice briefs: ikek, yomo, fartsy, idorem", "Mention author web app briefly in 8.1 as emerging alternative"],
+      "status": "Not Started",
+      "depends_on": [],
+      "build_order": 5
+    },
+    {
+      "number": 2,
+      "title": "Foundations",
+      "subtitle": "The Standards That Govern Every Transcript",
+      "part": "PART TWO: THE CRAFT",
+      "slug": "foundations",
+      "subsections": [
+        "2.1 Legal Documentation Standards",
+        "2.2 Why Punctuation Dictates Legal Outcomes"
+      ],
+      "word_target": 2700,
+      "source_notes": "Partial drafts exist. Short bridge section.",
+      "diagrams": [],
+      "specific_elements": ["Include FRE 106 requirements", "Include FRCP 32 transcript types", "Three pillars: clarity, fidelity, forensic utility"],
+      "status": "Not Started",
+      "depends_on": [1],
+      "build_order": 6
+    },
+    {
+      "number": 6,
+      "title": "Transcript Architecture & Formatting",
+      "subtitle": "Building the Physical Record",
+      "part": "PART THREE: TRANSCRIPT PRODUCTION",
+      "slug": "transcript-architecture",
+      "subsections": [
+        "6.1 Speaker Identification & Multi-Speaker Dialogue",
+        "6.2 Exhibits, Legal Citations, and Annotations",
+        "6.3 Special Scenarios in Transcription",
+        "6.4 Page Architecture and Digital Formatting",
+        "6.5 Jurisdictional Awareness: Why Rules Vary"
+      ],
+      "word_target": 8200,
+      "source_notes": "Partial drafts. CA/TX/Federal as case studies; full state matrix on website.",
+      "diagrams": ["Page architecture annotated diagram", "Exhibit marking flowchart"],
+      "specific_elements": ["Include FRCP 30(c) indentation rules", "Include NIST FIPS 140-3 for digital exhibits", "Include ASTM F2575-14 for foreign language", "Link to State Formatting Matrix on website"],
+      "status": "Not Started",
+      "depends_on": [3, 4, 5],
+      "build_order": 7
+    },
+    {
+      "number": 7,
+      "title": "Proofreading & Quality Assurance",
+      "subtitle": "The Last Line of Defense",
+      "part": "PART THREE: TRANSCRIPT PRODUCTION",
+      "slug": "proofreading-qa",
+      "subsections": [
+        "7.1 The Three-Pass Proofreading Method",
+        "7.2 Common Error Toolkit",
+        "7.3 Research & Verification Methods",
+        "7.4 Ethical Redaction and Attorney Interactions"
+      ],
+      "word_target": 6200,
+      "source_notes": "7.1 has a full draft. Others partial.",
+      "diagrams": [],
+      "specific_elements": ["Include FRE 106 checks in Pass 3", "Include moot vs mute homophone trap"],
+      "status": "Not Started",
+      "depends_on": [6],
+      "build_order": 8
+    },
+    {
+      "number": 9,
+      "title": "The Modern Practice",
+      "subtitle": "Technology, Health, and the Future",
+      "part": "PART FOUR: TECHNOLOGY & MODERN PRACTICE",
+      "slug": "modern-practice",
+      "subsections": [
+        "9.1 Remote Proceedings & Virtual Courtrooms",
+        "9.2 Scoping & Real-Time Collaboration",
+        "9.3 Vocal Health & Ergonomics for Voice Writers",
+        "9.4 The Future: AI, Data Sovereignty, and the Hybrid Model"
+      ],
+      "word_target": 7500,
+      "source_notes": "9.4 has partial draft. Research doc has vocal health data.",
+      "diagrams": ["Vocal Nap Schedule diagram", "SOVT exercise reference"],
+      "specific_elements": ["Include SOVT exercises: straw phonation, lip trills", "Include 30/10 rule", "Include AI hallucination risks", "Include HIPAA and CJIS concerns"],
+      "status": "Not Started",
+      "depends_on": [8],
+      "build_order": 9
+    },
+    {
+      "number": 10,
+      "title": "Running Your Practice",
+      "subtitle": "The Business of Court Reporting",
+      "part": "PART FIVE: THE BUSINESS",
+      "slug": "running-your-practice",
+      "subsections": [
+        "10.1 Operating as a 1099 Independent Contractor",
+        "10.2 Contracts, Billing, and Agency Relationships",
+        "10.3 Ethics, AI, and Professional Conduct"
+      ],
+      "word_target": 5000,
+      "source_notes": "No existing draft. Research doc has business data.",
+      "diagrams": [],
+      "specific_elements": ["Include 1099-NEC, 15.3% SE tax", "Include fixed-rate line item argument", "Include NCRA COPE"],
+      "status": "Not Started",
+      "depends_on": [],
+      "build_order": 10
+    },
+    {
+      "number": 11,
+      "title": "Your Digital Toolkit",
+      "subtitle": "Where the Book Meets the Web",
+      "part": "CLOSING CHAPTER",
+      "slug": "digital-toolkit",
+      "subsections": [
+        "What's on the website",
+        "How to use book + website together",
+        "Keeping current: how the website stays updated"
+      ],
+      "word_target": 1500,
+      "source_notes": "Write after all content sections complete.",
+      "diagrams": [],
+      "specific_elements": ["List all 13 website tools", "Explain free vs premium access"],
+      "status": "Not Started",
+      "depends_on": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "build_order": 11
+    },
+    {
+      "number": 0,
+      "title": "Front Matter",
+      "subtitle": "Title, Copyright, Foreword, How to Use This Guide",
+      "part": "FRONT MATTER",
+      "slug": "front-matter",
+      "subsections": [
+        "Title Page",
+        "Copyright & Disclaimer",
+        "Dedication",
+        "Foreword",
+        "How to Use This Guide"
+      ],
+      "word_target": 1600,
+      "source_notes": "Write last after full book is complete.",
+      "diagrams": [],
+      "specific_elements": ["Quick-start paths: voice writer, digital reporter, scopist/proofreader"],
+      "status": "Not Started",
+      "depends_on": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "build_order": 12
+    }
+  ]
+}
