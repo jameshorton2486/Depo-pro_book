@@ -58,7 +58,9 @@ def _missing_key_panel(key: str) -> Panel:
 def load_config() -> Config:
     # Load .env from the bookforge directory so it works regardless of cwd
     _config_dir = Path(__file__).resolve().parent
-    load_dotenv(_config_dir / ".env")
+    # Prefer .env values to avoid stale shell env keys during local runs.
+    # For production/CI, set the env vars directly or omit the .env file.
+    load_dotenv(_config_dir / ".env", override=True)
     console = Console()
 
     missing = []
