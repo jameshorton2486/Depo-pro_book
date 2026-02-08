@@ -32,8 +32,6 @@ Thumbs.db
 bookforge/chapters/
 bookforge/logs/
 
-# Local docs / briefings
+# Local docs / briefings (optional; CODEX_* kept in repo for reference)
 BookForge_Action_Guide.md
 CODEX_CONTEXT (1).md
-CODEX_CONTEXT.md
-CODEX_PUBLISHING_PROMPT.md
