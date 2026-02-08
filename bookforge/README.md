@@ -31,6 +31,8 @@ cp .env.example .env
 python bookforge.py init
 ```
 
+Note: For local runs, BookForge prefers the `.env` file over any stale shell environment variables.
+
 ## Write Your First Chapter
 
 ```bash
