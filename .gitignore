@@ -1,6 +1,14 @@
 # Environment and secrets
 .env
+*.env
 *.env.local
+.env.*
+bookforge/.env
+bookforge/.env.*
+bookforge/.env.txt
+
+# Installers
+*.msi
 
 # Python
 __pycache__/

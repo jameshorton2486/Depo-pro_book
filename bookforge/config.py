@@ -56,12 +56,14 @@ def _missing_key_panel(key: str) -> Panel:
 
 
 def load_config() -> Config:
-    load_dotenv()
+    # Load .env from the bookforge directory so it works regardless of cwd
+    _config_dir = Path(__file__).resolve().parent
+    load_dotenv(_config_dir / ".env")
     console = Console()
 
     missing = []
     for key in REQUIRED_KEYS:
-        if not os.getenv(key):
+        if not (os.getenv(key) or "").strip():
             missing.append(key)
 
     if missing:
@@ -69,21 +71,24 @@ def load_config() -> Config:
             console.print(_missing_key_panel(key))
         raise SystemExit(1)
 
+    def _get(key: str, default: str = "") -> str:
+        return (os.getenv(key) or default).strip()
+
     return Config(
-        anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", ""),
-        openai_api_key=os.getenv("OPENAI_API_KEY", ""),
-        google_api_key=os.getenv("GOOGLE_API_KEY", ""),
-        claude_model=os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514"),
-        openai_model=os.getenv("OPENAI_MODEL", "gpt-4o"),
-        gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
-        output_dir=os.getenv("OUTPUT_DIR", "./chapters"),
-        log_level=os.getenv("LOG_LEVEL", "INFO"),
-        image_mode=os.getenv("IMAGE_MODE", "prompts"),
-        image_model=os.getenv("IMAGE_MODEL", "gpt-image-1.5"),
-        image_size=os.getenv("IMAGE_SIZE", "1024x1024"),
-        image_quality=os.getenv("IMAGE_QUALITY", "medium"),
-        image_background=os.getenv("IMAGE_BACKGROUND", "auto"),
-        image_format=os.getenv("IMAGE_FORMAT", "png"),
+        anthropic_api_key=_get("ANTHROPIC_API_KEY"),
+        openai_api_key=_get("OPENAI_API_KEY"),
+        google_api_key=_get("GOOGLE_API_KEY"),
+        claude_model=_get("CLAUDE_MODEL", "claude-sonnet-4-20250514"),
+        openai_model=_get("OPENAI_MODEL", "gpt-4o"),
+        gemini_model=_get("GEMINI_MODEL", "gemini-2.0-flash"),
+        output_dir=_get("OUTPUT_DIR", "./chapters"),
+        log_level=_get("LOG_LEVEL", "INFO"),
+        image_mode=_get("IMAGE_MODE", "prompts"),
+        image_model=_get("IMAGE_MODEL", "gpt-image-1.5"),
+        image_size=_get("IMAGE_SIZE", "1024x1024"),
+        image_quality=_get("IMAGE_QUALITY", "medium"),
+        image_background=_get("IMAGE_BACKGROUND", "auto"),
+        image_format=_get("IMAGE_FORMAT", "png"),
     )
 
 
