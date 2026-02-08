@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime
+import warnings
 from pathlib import Path
 
 
@@ -10,6 +11,7 @@ class CostTracker:
         "claude": {"input": 3.0 / 1_000_000, "output": 15.0 / 1_000_000},
         "gpt-4o": {"input": 2.5 / 1_000_000, "output": 10.0 / 1_000_000},
         "gemini": {"input": 0.075 / 1_000_000, "output": 0.30 / 1_000_000},
+        "unknown": {"input": 0.0, "output": 0.0},
     }
 
     def __init__(self, logs_dir: Path):
@@ -32,7 +34,8 @@ class CostTracker:
             return "gpt-4o"
         if "gemini" in model_lower:
             return "gemini"
-        return "gpt-4o"
+        warnings.warn(f"Unknown model for pricing: {model}. Cost will be recorded as $0.", RuntimeWarning)
+        return "unknown"
 
     def log_api_call(self, model: str, input_tokens: int, output_tokens: int, section_number: int, step_name: str) -> float:
         key = self._price_key(model)

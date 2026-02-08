@@ -8,3 +8,7 @@ Key points:
 - Short declarative sentences
 - Use required terminology and avoid prohibited terms
 - Follow 3-Layer Method in each subsection
+
+Canonical references:
+- governance/Style_Bible_v3.docx
+- governance/Master_Writing_Prompt.md

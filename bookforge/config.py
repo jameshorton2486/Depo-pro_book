@@ -33,6 +33,12 @@ class Config:
     gemini_model: str = "gemini-2.0-flash"
     output_dir: str = "./chapters"
     log_level: str = "INFO"
+    image_mode: str = "prompts"
+    image_model: str = "gpt-image-1.5"
+    image_size: str = "1024x1024"
+    image_quality: str = "medium"
+    image_background: str = "auto"
+    image_format: str = "png"
 
     @property
     def output_path(self) -> Path:
@@ -72,6 +78,12 @@ def load_config() -> Config:
         gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
         output_dir=os.getenv("OUTPUT_DIR", "./chapters"),
         log_level=os.getenv("LOG_LEVEL", "INFO"),
+        image_mode=os.getenv("IMAGE_MODE", "prompts"),
+        image_model=os.getenv("IMAGE_MODEL", "gpt-image-1.5"),
+        image_size=os.getenv("IMAGE_SIZE", "1024x1024"),
+        image_quality=os.getenv("IMAGE_QUALITY", "medium"),
+        image_background=os.getenv("IMAGE_BACKGROUND", "auto"),
+        image_format=os.getenv("IMAGE_FORMAT", "png"),
     )
 
 

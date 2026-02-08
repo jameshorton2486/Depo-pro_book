@@ -48,12 +48,15 @@ python bookforge.py write 3
 7. Readability (local)
 8. Graphics (local prompt generation)
 
+Master writing rules are loaded from `governance/Master_Writing_Prompt.md` at runtime (with a built-in fallback).
+
 ## CLI Commands
 
 ```bash
 bookforge init
 bookforge write 3
 bookforge write 3 --from 4
+bookforge write 3 --only 2
 bookforge write 3 --context "Focus on California MTFS rules"
 bookforge write 3 --force
 bookforge approve 3
@@ -64,6 +67,7 @@ bookforge export epub
 bookforge export pdf
 bookforge export docx
 bookforge export html
+bookforge export site
 bookforge export all
 bookforge cost
 ```
@@ -94,7 +98,28 @@ Exports are compiled from `chapters/XX-slug/final/*.md` using `metadata.yaml`:
 - PDF: `bookforge export pdf`
 - DOCX: `bookforge export docx`
 - HTML: `bookforge export html`
+- Web site: `bookforge export site`
 - All: `bookforge export all`
+
+The static site output is written to `exports/site/index.html`.
+
+## Graphics Generation
+
+BookForge always generates graphics prompts and tasks. You can also enable API image generation.
+
+Set in `.env`:
+
+- `IMAGE_MODE=prompts` (default)
+- `IMAGE_MODE=api` (generate images via OpenAI)
+- `IMAGE_MODE=both` (prompts + API images)
+
+Optional overrides:
+
+- `IMAGE_MODEL=gpt-image-1.5`
+- `IMAGE_SIZE=1024x1024`
+- `IMAGE_QUALITY=medium`
+- `IMAGE_BACKGROUND=auto`
+- `IMAGE_FORMAT=png`
 
 ## Troubleshooting
 

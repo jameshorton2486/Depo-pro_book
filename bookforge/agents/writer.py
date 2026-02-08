@@ -1,45 +1,17 @@
 from __future__ import annotations
 
-import time
-from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 from anthropic import Anthropic
 
 from prompts.master_writer import MASTER_WRITER_PROMPT
+from agents.base_agent import BaseAgent
 
 
-class Writer:
+class Writer(BaseAgent):
     def __init__(self, config, exporter, cost_tracker, log_path: Path):
-        self.config = config
-        self.exporter = exporter
-        self.cost_tracker = cost_tracker
-        self.log_path = log_path
-
-    def _log_api(self, model: str, step: str, section: int, input_tokens: int, output_tokens: int, cost: float, success: bool, error: str | None = None) -> None:
-        line = (
-            f"{datetime.utcnow().isoformat()} | model={model} | step={step} | section={section} | "
-            f"input_tokens={input_tokens} | output_tokens={output_tokens} | cost={cost:.6f} | success={success}"
-        )
-        if error:
-            line += f" | error={error}"
-        self.log_path.parent.mkdir(parents=True, exist_ok=True)
-        with self.log_path.open("a", encoding="utf-8") as handle:
-            handle.write(line + "\n")
-
-    def _call_with_retry(self, call_fn, step: str, section: int) -> str:
-        delay = 2
-        for attempt in range(3):
-            try:
-                response = call_fn()
-                return response
-            except Exception as exc:
-                if attempt == 2:
-                    raise
-                time.sleep(delay)
-                delay *= 2
-        raise RuntimeError("Retry loop failed unexpectedly.")
+        super().__init__(config, exporter, cost_tracker, log_path)
 
     def _build_draft_prompt(self, section: dict, research_content: str, additional_context: str, subsections: Optional[list[str]] = None) -> str:
         subs = subsections or section.get("subsections", [])

@@ -27,3 +27,11 @@ Thumbs.db
 
 # Cursor
 .cursor/
+
+# BookForge runtime output
+bookforge/chapters/
+bookforge/logs/
+
+# Local docs / briefings
+BookForge_Action_Guide.md
+CODEX_CONTEXT (1).md

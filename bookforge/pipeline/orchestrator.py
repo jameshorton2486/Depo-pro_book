@@ -15,6 +15,7 @@ from agents.reviewer import Reviewer
 from agents.researcher import Researcher
 from agents.readability import ReadabilityAnalyzer
 from agents.graphic_prompter import GraphicPrompter
+from agents.image_generator import ImageGenerator
 from exporters.markdown_exporter import MarkdownExporter
 from pipeline.status_tracker import StatusTracker
 from pipeline.cost_tracker import CostTracker
@@ -50,6 +51,7 @@ class Pipeline:
         self.researcher = Researcher(config, self.exporter, self.cost, log_path)
         self.readability = ReadabilityAnalyzer()
         self.graphic_prompter = GraphicPrompter()
+        self.image_generator = ImageGenerator(config, self.exporter, self.cost, log_path)
         self.toc_path = project_root / "config" / "toc.json"
 
     def get_section(self, section_number: int) -> dict:
@@ -78,7 +80,23 @@ class Pipeline:
     def _skip_or_run(self, path: Path, force: bool) -> bool:
         return path.exists() and not force
 
-    def run_full(self, section_number: int, additional_context: str = "", start_from: int = 0, force: bool = False) -> None:
+    def _should_run(self, step_number: int, start_from: int, only_step: int | None) -> bool:
+        if only_step is not None:
+            return step_number == only_step
+        return start_from <= step_number
+
+    def _require_file(self, path: Path, message: str) -> None:
+        if not path.exists():
+            raise FileNotFoundError(message)
+
+    def run_full(
+        self,
+        section_number: int,
+        additional_context: str = "",
+        start_from: int = 0,
+        force: bool = False,
+        only_step: int | None = None,
+    ) -> None:
         section = self.get_section(section_number)
         chapter_dir = self.get_chapter_dir(section)
         self.ensure_chapter_dirs(section)
@@ -97,7 +115,7 @@ class Pipeline:
         deep_sections = set(toc_data["research_strategy"]["deep_research_sections"])
 
         # Step 0: Research
-        if start_from <= 0:
+        if self._should_run(0, start_from, only_step):
             if section_number in deep_sections:
                 if research_path.exists() and not force:
                     self.console.print("[green] Using existing Deep Research file[/green]")
@@ -120,7 +138,7 @@ class Pipeline:
                     self.status.update_step(section_number, 0, section)
 
         # Step 1: Draft
-        if start_from <= 1:
+        if self._should_run(1, start_from, only_step):
             if self._skip_or_run(draft_path, force):
                 self.console.print("[yellow] Skipping draft (file exists)[/yellow]")
             else:
@@ -131,7 +149,12 @@ class Pipeline:
                 self.status.update_step(section_number, 1, section)
 
         # Step 2: Expand
-        if start_from <= 2:
+        if self._should_run(2, start_from, only_step):
+            if only_step is not None:
+                self._require_file(
+                    draft_path,
+                    f"Missing draft for expansion. Run: bookforge write {section_number} --only 1",
+                )
             if self._skip_or_run(expansion_path, force):
                 self.console.print("[yellow] Skipping expansion (file exists)[/yellow]")
             else:
@@ -142,7 +165,16 @@ class Pipeline:
                 self.status.update_step(section_number, 2, section)
 
         # Step 3: Fact-check
-        if start_from <= 3:
+        if self._should_run(3, start_from, only_step):
+            if only_step is not None:
+                self._require_file(
+                    draft_path,
+                    f"Missing draft for fact-check. Run: bookforge write {section_number} --only 1",
+                )
+                self._require_file(
+                    expansion_path,
+                    f"Missing expansion notes for fact-check. Run: bookforge write {section_number} --only 2",
+                )
             if self._skip_or_run(fact_path, force):
                 self.console.print("[yellow] Skipping fact-check (file exists)[/yellow]")
             else:
@@ -154,7 +186,12 @@ class Pipeline:
                 self.status.update_step(section_number, 3, section)
 
         # Step 4: Review
-        if start_from <= 4:
+        if self._should_run(4, start_from, only_step):
+            if only_step is not None:
+                self._require_file(
+                    draft_path,
+                    f"Missing draft for review. Run: bookforge write {section_number} --only 1",
+                )
             if self._skip_or_run(review_path, force):
                 self.console.print("[yellow] Skipping review (file exists)[/yellow]")
             else:
@@ -165,7 +202,24 @@ class Pipeline:
                 self.status.update_step(section_number, 4, section)
 
         # Step 5: Revise
-        if start_from <= 5:
+        if self._should_run(5, start_from, only_step):
+            if only_step is not None:
+                self._require_file(
+                    draft_path,
+                    f"Missing draft for revision. Run: bookforge write {section_number} --only 1",
+                )
+                self._require_file(
+                    expansion_path,
+                    f"Missing expansion notes for revision. Run: bookforge write {section_number} --only 2",
+                )
+                self._require_file(
+                    fact_path,
+                    f"Missing fact-check report for revision. Run: bookforge write {section_number} --only 3",
+                )
+                self._require_file(
+                    review_path,
+                    f"Missing review report for revision. Run: bookforge write {section_number} --only 4",
+                )
             if self._skip_or_run(revised_path, force):
                 self.console.print("[yellow] Skipping revision (file exists)[/yellow]")
             else:
@@ -180,7 +234,12 @@ class Pipeline:
                 self.status.update_step(section_number, 5, section)
 
         # Step 6: Readability
-        if start_from <= 6:
+        if self._should_run(6, start_from, only_step):
+            if only_step is not None:
+                self._require_file(
+                    revised_path,
+                    f"Missing revised draft for readability. Run: bookforge write {section_number} --only 5",
+                )
             if self._skip_or_run(readability_path, force):
                 self.console.print("[yellow] Skipping readability (file exists)[/yellow]")
             else:
@@ -191,7 +250,7 @@ class Pipeline:
                 self.status.update_step(section_number, 6, section)
 
         # Step 7: Human review
-        if start_from <= 7:
+        if self._should_run(7, start_from, only_step):
             panel = Panel(
                 "Human review required.\n"
                 f"Read: {chapter_dir / 'drafts' / 'draft-2-revised.md'}\n"
@@ -205,7 +264,12 @@ class Pipeline:
             self.console.print(panel)
 
         # Step 8: Graphics
-        if start_from <= 8:
+        if self._should_run(8, start_from, only_step):
+            if only_step is not None:
+                if not revised_path.exists() and not final_path.exists():
+                    raise FileNotFoundError(
+                        f"Missing revised or final draft for graphics. Run: bookforge write {section_number} --only 5"
+                    )
             graphics_prompts_path = chapter_dir / "prompts" / "graphic-prompts.md"
             graphics_tasks_path = chapter_dir / "graphics" / "graphics-tasks.md"
             if self._skip_or_run(graphics_tasks_path, force):
@@ -219,15 +283,24 @@ class Pipeline:
                     self.console.print("[red]No draft available for graphics step.[/red]")
                 else:
                     with Status("Generating graphic prompts...", console=self.console):
-                        prompts_md, tasks_md = self.graphic_prompter.generate_graphic_tasks(source_text, section)
+                        prompts_md, tasks_md, manifest = self.graphic_prompter.generate_graphic_tasks(source_text, section)
                     graphics_prompts_path = self.exporter.save_file(
                         chapter_dir, "prompts", "graphic-prompts.md", prompts_md, section, "graphics_prompts"
                     )
                     graphics_tasks_path = self.exporter.save_file(
                         chapter_dir, "graphics", "graphics-tasks.md", tasks_md, section, "graphics_tasks"
                     )
+                    manifest_path = chapter_dir / "graphics" / "manifest.json"
+                    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
                     self.console.print(f"[green] Graphics prompts saved[/green] [dim]{graphics_prompts_path}[/dim]")
                     self.console.print(f"[green] Graphics tasks saved[/green] [dim]{graphics_tasks_path}[/dim]")
+                    self.console.print(f"[green] Graphics manifest saved[/green] [dim]{manifest_path}[/dim]")
+                    image_mode = (self.config.image_mode or "prompts").lower().strip()
+                    if image_mode in {"api", "both"}:
+                        with Status("Generating images via API...", console=self.console):
+                            created = self.image_generator.generate_images(manifest, chapter_dir)
+                        if created:
+                            self.console.print(f"[green] Images generated:[/green] {len(created)}")
                     self.status.update_step(section_number, 8, section)
 
         # Summary

@@ -1,4 +1,9 @@
-MASTER_WRITER_PROMPT = """You are the lead writer for "Mastering Legal Transcription: The Complete Guide to Punctuation, Formatting & Precision in Court Reporting." This book is written exclusively for voice writers and digital court reporters.
+from __future__ import annotations
+
+from pathlib import Path
+
+_FALLBACK_PROMPT = """You are the lead writer for "Mastering Legal Transcription: The Complete Guide to Punctuation, Formatting & Precision in Court Reporting." This book is written exclusively for voice writers and digital court reporters.
+
 AUDIENCE & READING LEVEL:
 
 Reader holds a high school diploma or GED. No college required.
@@ -53,3 +58,26 @@ Use active voice: "Mark the exhibit" not "The exhibit should be marked."
 
 OUTPUT: Return the complete chapter as clean Markdown. Use ## for section title, ### for subsections, #### for sub-subsections. Use fenced code blocks for transcript examples.
 """
+
+
+def _extract_prompt(text: str) -> str:
+    if "## THE PROMPT" in text:
+        _, rest = text.split("## THE PROMPT", 1)
+    else:
+        rest = text
+    if "## SESSION VARIABLES" in rest:
+        rest = rest.split("## SESSION VARIABLES", 1)[0]
+    return rest.strip()
+
+
+def _load_master_prompt() -> str:
+    governance_path = Path(__file__).resolve().parents[1] / "governance" / "Master_Writing_Prompt.md"
+    if governance_path.exists():
+        content = governance_path.read_text(encoding="utf-8")
+        extracted = _extract_prompt(content)
+        if extracted:
+            return extracted
+    return _FALLBACK_PROMPT
+
+
+MASTER_WRITER_PROMPT = _load_master_prompt()

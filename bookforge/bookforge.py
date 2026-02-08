@@ -1,8 +1,10 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 import os
 import shutil
-import sys
 import json
-from pathlib import Path
 
 import click
 from rich.console import Console
@@ -83,11 +85,15 @@ def _test_apis(console: Console, config) -> None:
 
     # Gemini
     try:
-        import google.generativeai as genai
-
-        genai.configure(api_key=config.google_api_key)
-        model = genai.GenerativeModel(config.gemini_model)
-        model.generate_content("Reply with OK.")
+        try:
+            from google import genai
+            client = genai.Client(api_key=config.google_api_key)
+            client.models.generate_content(model=config.gemini_model, contents="Reply with OK.")
+        except Exception:
+            import google.generativeai as genai
+            genai.configure(api_key=config.google_api_key)
+            model = genai.GenerativeModel(config.gemini_model)
+            model.generate_content("Reply with OK.")
         console.print("[green] Gemini connection OK[/green]")
     except Exception as exc:
         console.print(Panel(f"Gemini test failed: {exc}", style="red"))
@@ -120,16 +126,17 @@ def init():
 @cli.command()
 @click.argument("section_number", type=int)
 @click.option("--from", "start_from", type=int, default=0, help="Resume from step (0-8).")
+@click.option("--only", "only_step", type=int, default=None, help="Run only a single step (0-8).")
 @click.option("--context", "additional_context", type=str, default="", help="Additional instructions for this session.")
 @click.option("--force", is_flag=True, help="Re-run all steps even if files exist.")
-def write(section_number: int, start_from: int, additional_context: str, force: bool):
+def write(section_number: int, start_from: int, only_step: int | None, additional_context: str, force: bool):
     """Run the full pipeline for a section."""
     console = Console()
     config = load_config()
     ensure_log_dir(PROJECT_ROOT / "logs")
     log_path = get_log_path(PROJECT_ROOT / "logs")
     pipeline = Pipeline(config, PROJECT_ROOT, log_path)
-    pipeline.run_full(section_number, additional_context, start_from, force)
+    pipeline.run_full(section_number, additional_context, start_from, force, only_step)
 
 
 @cli.command()
@@ -188,17 +195,20 @@ def list():
     """Display build order with section details."""
     console = Console()
     toc = json.loads((PROJECT_ROOT / "config" / "toc.json").read_text(encoding="utf-8"))
+    tracker = StatusTracker(PROJECT_ROOT)
+    statuses = tracker.get_all_statuses()
     table = Table(title="Build Order", box=box.SIMPLE)
     table.add_column("Order", width=5)
     table.add_column("#", width=2)
     table.add_column("Title", width=30)
     table.add_column("Status", width=12)
     for section in sorted(toc["sections"], key=lambda s: s["build_order"]):
+        entry = statuses.get(str(section["number"]), {})
         table.add_row(
             str(section["build_order"]),
             str(section["number"]),
             section["title"],
-            section.get("status", "-")[:12],
+            entry.get("status", "Not Started")[:12],
         )
     console.print(table)
 
@@ -214,14 +224,18 @@ def open(section_number: int):
     section = pipeline.get_section(section_number)
     path = pipeline.get_chapter_dir(section)
     Console().print(f"{path}")
-    if sys.platform == "darwin":
-        os.system(f"open \"{path}\"")
+    if sys.platform == "win32":
+        os.startfile(str(path))
+    elif sys.platform == "darwin":
+        os.system(f'open "{path}"')
+    else:
+        os.system(f'xdg-open "{path}"')
 
 
 @cli.command()
 @click.argument("format", type=str)
 def export(format: str):
-    """Export final chapters to EPUB, PDF, DOCX, or HTML."""
+    """Export final chapters to EPUB, PDF, DOCX, HTML, or a static site."""
     console = Console()
     exporter = BookExporter(PROJECT_ROOT)
     try:
@@ -233,19 +247,22 @@ def export(format: str):
             output = exporter.export_docx()
         elif format == "html":
             output = exporter.export_html()
+        elif format == "site":
+            output = exporter.export_site()
         elif format == "all":
             outputs = [
                 exporter.export_epub(),
                 exporter.export_pdf(),
                 exporter.export_docx(),
                 exporter.export_html(),
+                exporter.export_site(),
             ]
             console.print("[green]Exports complete:[/green]")
             for item in outputs:
                 console.print(f"[dim]{item}[/dim]")
             return
         else:
-            raise click.BadParameter("Format must be epub, pdf, docx, html, or all.")
+            raise click.BadParameter("Format must be epub, pdf, docx, html, site, or all.")
         console.print(f"[green]Export complete:[/green] [dim]{output}[/dim]")
     except Exception as exc:
         console.print(Panel(f"Export failed: {exc}", style="red"))
