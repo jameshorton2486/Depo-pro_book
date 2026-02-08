@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>$title$</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  $if(css)$
+  $for(css)$
+  <link rel="stylesheet" href="$css$" />
+  $endfor$
+  $endif$
+</head>
+<body>
+  <div class="layout">
+    $if(toc)$
+    <nav id="toc">
+    $toc$
+    </nav>
+    $endif$
+    <main class="content">
+    $body$
+    </main>
+  </div>
+</body>
+</html>

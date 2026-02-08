@@ -1,0 +1,20 @@
+:root { --brand-teal: #1b3a4b; --brand-gray: #4a5568; --bg: #fafafa; }
+body { font-family: Georgia, "Times New Roman", serif; line-height: 1.7; max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; color: #1a1a1a; background: var(--bg); }
+h1, h2, h3 { color: var(--brand-teal); font-family: "Segoe UI", Arial, sans-serif; }
+h1 { font-size: 1.8rem; border-bottom: 2px solid var(--brand-teal); padding-bottom: 0.5rem; margin-top: 3rem; }
+h2 { font-size: 1.4rem; margin-top: 2rem; }
+h3 { font-size: 1.15rem; }
+code, pre { font-family: "Courier New", monospace; font-size: 0.9rem; }
+pre { background: #f0f0f0; padding: 1rem; border-left: 3px solid var(--brand-teal); overflow-x: auto; }
+blockquote { border-left: 4px solid var(--brand-teal); margin: 1.5rem 0; padding: 0.5rem 1rem; background: #f0f7fa; }
+nav#toc { position: sticky; top: 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 2rem; }
+nav#toc ul { list-style: none; padding-left: 0; }
+nav#toc li { margin: 0.3rem 0; }
+nav#toc a { color: var(--brand-teal); text-decoration: none; }
+.layout { display: grid; grid-template-columns: 260px 1fr; gap: 2rem; }
+@media (max-width: 900px) {
+  body { padding: 0 1rem; }
+  h1 { font-size: 1.5rem; }
+  .layout { grid-template-columns: 1fr; }
+  nav#toc { position: static; }
+}

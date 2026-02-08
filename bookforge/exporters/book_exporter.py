@@ -7,7 +7,6 @@ from pathlib import Path
 
 from rich.console import Console
 
-
 class BookExporter:
     def __init__(self, project_root: Path):
         self.project_root = project_root
@@ -140,6 +139,146 @@ class BookExporter:
         ]
         self._run(cmd)
         return output
+
+    def export_kindle(self) -> Path:
+        self._check_pandoc()
+        output_dir = self.exports_dir / "kindle"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        files = self.compile_finals()
+        if not files:
+            raise RuntimeError("No final chapter files found to export.")
+        output = output_dir / "mastering-legal-transcription.epub"
+        metadata = self.project_root / "config" / "kindle-metadata.yaml"
+        cmd = [
+            "pandoc",
+            str(metadata),
+            *files,
+            "--toc",
+            "--toc-depth=2",
+            "--epub-chapter-level=1",
+            "-o",
+            str(output),
+        ]
+        self._run(cmd)
+        return output
+
+    def _check_weasyprint(self) -> None:
+        try:
+            import weasyprint  # noqa: F401
+        except Exception as exc:
+            raise RuntimeError(f"WeasyPrint not available: {exc}") from exc
+
+    def export_paperback(self) -> Path:
+        self._check_pandoc()
+        output_dir = self.exports_dir / "paperback"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        files = self.compile_finals()
+        if not files:
+            raise RuntimeError("No final chapter files found to export.")
+        output = output_dir / "mastering-legal-transcription.pdf"
+
+        if shutil.which("xelatex"):
+            header_path = self.project_root / "config" / "paperback-header.tex"
+            cmd = [
+                "pandoc",
+                "metadata.yaml",
+                *files,
+                "--pdf-engine=xelatex",
+                "--toc",
+                "--toc-depth=2",
+                "-V",
+                "geometry:paperwidth=6in,paperheight=9in,inner=0.75in,outer=0.5in,top=0.75in,bottom=0.75in",
+                "-V",
+                "fontsize=11pt",
+                "-V",
+                "documentclass=book",
+                "-V",
+                "classoption=twoside",
+                "-V",
+                "mainfont=Georgia",
+                "-V",
+                "monofont=Courier New",
+                "--include-in-header",
+                str(header_path),
+                "-o",
+                str(output),
+            ]
+            self._run(cmd)
+            return output
+
+        self._check_weasyprint()
+        html_path = output_dir / "paperback.html"
+        css_path = self.project_root / "config" / "paperback.css"
+        cmd = [
+            "pandoc",
+            "metadata.yaml",
+            *files,
+            "--standalone",
+            "--toc",
+            "--toc-depth=2",
+            "-o",
+            str(html_path),
+        ]
+        self._run(cmd)
+        from weasyprint import HTML
+
+        HTML(filename=str(html_path)).write_pdf(str(output), stylesheets=[str(css_path)])
+        return output
+
+    def export_gdoc(self) -> Path:
+        try:
+            from exporters.docx_exporter import DocxExporter
+        except Exception as exc:
+            raise RuntimeError(f"python-docx not available: {exc}") from exc
+        exporter = DocxExporter(self.project_root)
+        return exporter.export()
+
+    def export_website(self) -> Path:
+        self._check_pandoc()
+        output_dir = self.exports_dir / "website"
+        chapters_dir = output_dir / "chapters"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        chapters_dir.mkdir(parents=True, exist_ok=True)
+        files = self.compile_finals()
+        if not files:
+            raise RuntimeError("No final chapter files found to export.")
+
+        source_css_path = self.project_root / "config" / "website.css"
+        css_path = output_dir / "style.css"
+        shutil.copy2(source_css_path, css_path)
+        template_path = self.project_root / "config" / "website-template.html"
+        index_path = output_dir / "index.html"
+
+        cmd = [
+            "pandoc",
+            "metadata.yaml",
+            *files,
+            "--standalone",
+            "--toc",
+            "--toc-depth=2",
+            f"--css={css_path}",
+            f"--template={template_path}",
+            "-o",
+            str(index_path),
+        ]
+        self._run(cmd)
+
+        for md_path in files:
+            name = Path(md_path).name
+            html_name = name.replace(".md", ".html")
+            chapter_out = chapters_dir / html_name
+            chapter_cmd = [
+                "pandoc",
+                str(md_path),
+                "--standalone",
+                "--toc",
+                "--toc-depth=2",
+                f"--css=../style.css",
+                "-o",
+                str(chapter_out),
+            ]
+            self._run(chapter_cmd)
+        return output_dir
 
     def _pandoc_html(self, md_path: Path) -> str:
         cmd = ["pandoc", str(md_path), "--from", "markdown", "--to", "html"]

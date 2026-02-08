@@ -233,9 +233,15 @@ def open(section_number: int):
 
 
 @cli.command()
-@click.argument("format", type=str)
+@click.argument(
+    "format",
+    type=click.Choice(
+        ["epub", "pdf", "docx", "html", "kindle", "paperback", "gdoc", "website", "site", "all"],
+        case_sensitive=False,
+    ),
+)
 def export(format: str):
-    """Export final chapters to EPUB, PDF, DOCX, HTML, or a static site."""
+    """Export final chapters to various publishing formats."""
     console = Console()
     exporter = BookExporter(PROJECT_ROOT)
     try:
@@ -247,11 +253,23 @@ def export(format: str):
             output = exporter.export_docx()
         elif format == "html":
             output = exporter.export_html()
+        elif format == "kindle":
+            output = exporter.export_kindle()
+        elif format == "paperback":
+            output = exporter.export_paperback()
+        elif format == "gdoc":
+            output = exporter.export_gdoc()
+        elif format == "website":
+            output = exporter.export_website()
         elif format == "site":
             output = exporter.export_site()
         elif format == "all":
             outputs = [
                 exporter.export_epub(),
+                exporter.export_kindle(),
+                exporter.export_paperback(),
+                exporter.export_gdoc(),
+                exporter.export_website(),
                 exporter.export_pdf(),
                 exporter.export_docx(),
                 exporter.export_html(),
@@ -262,7 +280,7 @@ def export(format: str):
                 console.print(f"[dim]{item}[/dim]")
             return
         else:
-            raise click.BadParameter("Format must be epub, pdf, docx, html, site, or all.")
+            raise click.BadParameter("Format must be epub, pdf, docx, html, kindle, paperback, gdoc, website, site, or all.")
         console.print(f"[green]Export complete:[/green] [dim]{output}[/dim]")
     except Exception as exc:
         console.print(Panel(f"Export failed: {exc}", style="red"))
