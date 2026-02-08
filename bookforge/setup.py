@@ -5,7 +5,18 @@ setup(
     version="2.0.0",
     description="BookForge v2 - Multi-AI book writing pipeline",
     packages=find_packages(),
-    install_requires=[],
+    install_requires=[
+        "anthropic>=0.40.0",
+        "openai>=1.50.0",
+        "google-genai>=0.6.0",
+        "google-generativeai>=0.8.0",
+        "click>=8.1.0",
+        "rich>=13.0.0",
+        "python-dotenv>=1.0.0",
+        "textstat>=0.7.0",
+        "python-docx>=1.1.0",
+        "weasyprint>=62.0",
+    ],
     entry_points={
         "console_scripts": [
             "bookforge=bookforge:cli",
