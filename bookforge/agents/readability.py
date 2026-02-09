@@ -11,12 +11,17 @@ class ReadabilityAnalyzer:
         report = []
         report.append(f"# Readability Report - Section {section['number']}\n")
 
-        fk_grade = textstat.flesch_kincaid_grade(text)
-        fk_ease = textstat.flesch_reading_ease(text)
+        # Exclude fenced code blocks (e.g., transcript excerpts) from readability scoring
+        # so the metric reflects narrative prose rather than line-numbered Q/A formatting.
+        narrative_text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+
+        fk_grade = textstat.flesch_kincaid_grade(narrative_text)
+        fk_ease = textstat.flesch_reading_ease(narrative_text)
         report.append(f"- Flesch-Kincaid Grade: {fk_grade:.2f}")
         report.append(f"- Flesch Reading Ease: {fk_ease:.2f}\n")
+        report.append("- Readability scope: code blocks excluded\n")
 
-        sentences = re.split(r"(?<=[.!?])\s+", text)
+        sentences = re.split(r"(?<=[.!?])\s+", narrative_text)
         long_sentences = []
         for sentence in sentences:
             words = sentence.split()
@@ -30,7 +35,7 @@ class ReadabilityAnalyzer:
         passive_patterns = [r"\bwas\s+\w+ed\b", r"\bwere\s+\w+ed\b", r"\bis\s+being\s+\w+ed\b", r"\bshould\s+be\s+\w+ed\b"]
         passive_hits = []
         for pattern in passive_patterns:
-            passive_hits.extend(re.findall(pattern, text, flags=re.IGNORECASE))
+            passive_hits.extend(re.findall(pattern, narrative_text, flags=re.IGNORECASE))
         report.append("## Passive Voice")
         if passive_hits:
             for hit in passive_hits:
