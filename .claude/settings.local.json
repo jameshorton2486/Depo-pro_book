@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python bookforge.py:*)",
+      "Bash(ls:*)",
+      "Bash(start bookforge/exports/mastering-legal-transcription.docx)",
+      "Bash(unzip:*)"
+    ]
+  }
+}

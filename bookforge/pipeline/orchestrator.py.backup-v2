@@ -19,7 +19,6 @@ from agents.image_generator import ImageGenerator
 from exporters.markdown_exporter import MarkdownExporter
 from pipeline.status_tracker import StatusTracker
 from pipeline.cost_tracker import CostTracker
-from pipeline.source_loader import SourceLoader
 
 
 def _slugify(text: str) -> str:
@@ -53,7 +52,6 @@ class Pipeline:
         self.readability = ReadabilityAnalyzer()
         self.graphic_prompter = GraphicPrompter()
         self.image_generator = ImageGenerator(config, self.exporter, self.cost, log_path)
-        self.source_loader = SourceLoader(project_root)
         self.toc_path = project_root / "config" / "toc.json"
 
     def get_section(self, section_number: int) -> dict:
@@ -145,16 +143,8 @@ class Pipeline:
                 self.console.print("[yellow] Skipping draft (file exists)[/yellow]")
             else:
                 research_content = _strip_front_matter(self.exporter.load_file(chapter_dir, "research", "research.md"))
-                # Load relevant source material from existing files
-                source_material = self.source_loader.get_source_material(section)
-                if source_material:
-                    self.console.print(f"[green] Loaded source material ({len(source_material)} chars)[/green]")
                 with Status("Drafting chapter...", console=self.console):
-                    draft = self.writer.draft_section(
-                        section, research_content, additional_context,
-                        source_material=source_material,
-                        chapter_dir=chapter_dir,
-                    )
+                    draft = self.writer.draft_section(section, research_content, additional_context, chapter_dir)
                 self.exporter.save_file(chapter_dir, "drafts", "draft-1-claude.md", draft, section, "draft")
                 self.status.update_step(section_number, 1, section)
 

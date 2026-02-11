@@ -36,6 +36,10 @@ Thumbs.db
 # Cursor
 .cursor/
 
+# Windows reserved name (cannot be indexed by Git)
+bookforge/nul
+nul
+
 # BookForge runtime output
 bookforge/chapters/
 bookforge/logs/
